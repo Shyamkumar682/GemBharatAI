@@ -263,7 +263,7 @@ def main():
         st.markdown("### 👋 Welcome to GemBharat AI")
         st.markdown("Your intelligent co-writer awaits below.")
         st.markdown("""<div style="text-align: center; font-size: 17px; margin-top: 10px;">👇 <strong>Click “Continue” to Launch GemBharat AI</strong></div>""", unsafe_allow_html=True)
-
+        st.markdown("<div style='margin-top: 25px;'></div>", unsafe_allow_html=True)  # Adds vertical space
         if st.button("🚀 Continue", key="continue"):
             st.session_state.continue_clicked = True
             st.rerun()
