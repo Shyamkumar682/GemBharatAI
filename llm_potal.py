@@ -262,7 +262,7 @@ def main():
 
         st.markdown("### 👋 Welcome to GemBharat AI")
         st.markdown("Your intelligent co-writer awaits below.")
-        st.markdown("👇 Click Here to Continue.")
+        st.markdown("👇 Click Here Continue to Launched")
         if st.button("🚀 Continue", key="continue"):
             st.session_state.continue_clicked = True
             st.rerun()
