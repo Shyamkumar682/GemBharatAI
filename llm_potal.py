@@ -261,7 +261,7 @@ def main():
             st.warning("⚠️ Logo not found.")
 
         st.markdown("### 👋 Welcome to GemBharat AI")
-        st.markdown("Your intelligent co-writer awaits below.\n\nDouble Press to Continue Button")
+        st.markdown("Your intelligent co-writer awaits below.")
 
         if st.button("🚀 Continue", key="continue"):
             st.session_state.continue_clicked = True
