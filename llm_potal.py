@@ -264,7 +264,7 @@ def main():
         st.markdown("Your intelligent co-writer awaits below.")
         st.markdown("""<div style="text-align: center; font-size: 17px; margin-top: 10px;">👇 <strong>Click “Continue” to Launch GemBharat AI</strong></div>""", unsafe_allow_html=True)
         st.markdown("<div style='margin-top: 25px;'></div>", unsafe_allow_html=True)  # Adds vertical space
-            st.markdown("""
+        st.markdown("""
     <div style="display: flex; justify-content: center; margin-top: 30px;">
         <form action="" method="post">
             <button type="submit" style="
