@@ -290,10 +290,10 @@ def main():
     """, unsafe_allow_html=True)
     
     # Detect form submission manually
-    if st.session_state.get("continue_clicked") is not True:
-        if st.form_submit_button("🚀 Continue", key="continue_hidden"):
-            st.session_state.continue_clicked = True
-            st.rerun()
+        if st.session_state.get("continue_clicked") is not True:
+            if st.form_submit_button("🚀 Continue", key="continue_hidden"):
+                st.session_state.continue_clicked = True
+                st.rerun()
 
     else:
         blog_app()
