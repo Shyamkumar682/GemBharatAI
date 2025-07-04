@@ -16,31 +16,31 @@ else:
     
 
 # 🧠 Blog generation function
-def generate_blog_content(text):
+def blog_content(text):
     try:
         response = model.generate_content(text)
         return response.text
     except Exception as e:
         return f"Error: {str(e)}"
 
-def extract_text_from_pdf(uploaded) -> str:
+def Pdf_Extraction(uploaded) -> str:
     doc = fitz.open(stream=uploaded.read(), filetype="pdf")
     return "".join(p.get_text() for p in doc)
 
-def ask_gemini(pdf_text: str, question: str) -> str:
-    prompt = f"PDF Content:\n{pdf_text}\n\nQuestion: {question}"
-    return model.generate_content(prompt).text
+def Pdf_Que(pdf_text: str, question: str) -> str:
+    pt = f"PDF Content:\n{pdf_text}\n\nQuestion: {question}"
+    return model.generate_content(pt).text  #ask to Gemini model to ans the que based on the PDF content
 
 # 🖥️ Streamlit interface
-def blog_app():
+def working_apps():
     # 🎨 Load and place logo
     try:
-        logo = Image.open("logo.png")
-        st.sidebar.image(logo, width=300)
+        logo = Image.open("logo-1.png")
+        st.sidebar.image(logo, width=250)
     except:
         st.warning("⚠️ Logo file not found. Please check the path.")
         
-    st.title("🧠 GemBharatAI")
+    st.title("🧠 JaiBharatAI")
     st.sidebar.title("Inspired by India and Gemini AI")
     
     with st.sidebar:
@@ -108,29 +108,48 @@ def blog_app():
     
     def Loding_process(text):
         status = st.empty()
-        animation_frames = ["🤖", "🧠", "✨", "🔍", "📚", "💡", "📝"]
+        frames = ["🧠", "🔠", "🪔", "📜", "🇮🇳", "🕉️", "🪄"]
         for i in range(14):
-            frame = animation_frames[i % len(animation_frames)]
-            status.markdown(f"<div style='font-size: 24px;'>{frame} Generating content... Please wait.</div>", unsafe_allow_html=True)
+            frame = frames[i % len(frames)]
+            status.markdown(f"<div style='font-size: 24px;'>{frame} JaiBharatAI is thinking...</div>", unsafe_allow_html=True)
             time.sleep(0.25)
         with st.spinner("Finalizing..."):
-            result = generate_blog_content(text)
+            result = blog_content(text)
         status.markdown("✅ <b>Content generated successfully!</b>", unsafe_allow_html=True)
         return result
 
-
     if option == "PDF Reader":
-        
-            st.header("📄 Chat with your PDF")
-            uploaded_file = st.file_uploader("Upload your PDF", type="pdf")
-            if uploaded_file:
-                pdf_text = extract_text_from_pdf(uploaded_file)
-                question = st.text_input("Ask a question about the PDF:")
-                if question:
-                    with st.spinner("Thinking..."):
-                        answer = ask_gemini(pdf_text[:100000], question)
-                        st.markdown("**Answer:**")
-                        st.write(answer)  
+        st.header("📄 Chat with your PDF")
+        uploaded_file = st.file_uploader("Upload your PDF", type="pdf")
+        if uploaded_file:
+            pdf_text = Pdf_Extraction(uploaded_file)
+            question = st.text_input("Ask a question about the PDF:")
+            if question:
+                with st.spinner("Thinking..."):
+                    answer = Pdf_Que(pdf_text[:100000], question)
+                    st.markdown("**Answer:**")
+                    
+                    # ✅ Custom styled, non-editable result box
+                    st.markdown("📄 **Result**")
+                    st.markdown(
+                        f"""
+                        <div style="
+                            background-color: #1e1e1e;
+                            color: white;
+                            padding: 1em;
+                            border-radius: 8px;
+                            border: 1px solid #444;
+                            font-size: 15px;
+                            font-family: 'Courier New', monospace;
+                            max-height: 300px;
+                            overflow-y: auto;
+                            white-space: pre-wrap;">
+                            {answer.strip()}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                        
     elif option == "Chat":
         st.header("Content Generator")
         st.info(f"Prompt example: {placeholder_map[task]}")
@@ -139,38 +158,54 @@ def blog_app():
 
         # ✅ Correct: Inside form
         with st.form("blog_form", clear_on_submit=False):
-            blog_input = st.text_area(
+            input = st.text_area(
                 "Enter your text:",
                 placeholder=placeholder_map[task],
                 height=100,
-                key="blog_input"  # session_state key
+                key="input"# session_state key
             )
             generate = st.form_submit_button("📝 Generate Content")
 
         # ✅ Submission handling
         if generate:
-            if blog_input.strip() == "":
+            if input.strip() == "":
                 st.warning("🚨 Please enter text before generating.")
             else:
-                result = Loding_process(blog_input)
+                result = Loding_process(input)
                 st.session_state.blog_output = result
                 st.success("✅ Output Generated")
 
         # ✅ Output display
         if "blog_output" in st.session_state and st.session_state.blog_output:
-            st.text_area("📄 Result",
-                        value=st.session_state.blog_output.strip(),
-                        height=300,
-                        key="blog_output_box")
+            st.markdown("📄 **Result**")
+
+            st.markdown(
+                f"""
+                <div style="
+                    background-color: #1e1e1e;
+                    color: white;
+                    padding: 1em;
+                    border-radius: 8px;
+                    border: 1px solid #444;
+                    font-size: 15px;
+                    font-family: 'Courier New', monospace;
+                    max-height: 300px;
+                    overflow-y: auto;
+                    white-space: pre-wrap;">
+                    {st.session_state.blog_output.strip()}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
     elif option == "About":
-        st.write('''### 🤖 About GemBharat AI
+        st.write('''### 🤖 About JaiBharat AI
 
-* **GemBharat AI** is a culturally rooted, AI-powered writing assistant designed to help creators, students, and professionals generate high-quality blog content in seconds.
+* **JaiBharat AI** is a culturally rooted, AI-powered writing assistant designed to help creators, students, and professionals generate high-quality blog content in seconds.
 
 * Built using **Google Gemini 1.5 Flash**, it blends the power of generative AI with the richness of Indian identity — supporting both **English and Hindi** inputs.
 
-* Whether you're brainstorming blog titles, expanding ideas, or chatting with PDFs, GemBharat AI is your intelligent co-writer — fast, creative, and always in your voice.
+* Whether you're brainstorming blog titles, expanding ideas, or chatting with PDFs, JaiBharat AI is your intelligent co-writer — fast, creative, and always in your voice.
 
 ---
 
@@ -197,20 +232,58 @@ _“Technology rooted in culture is the future.”_''')
             else:
                 result = Loding_process(text)
                 st.success("✅ Output Generated")
-                st.text_area("📄 Result", value=result.strip(), height=300)
+            st.markdown("📄 **Result**")
+
+            st.markdown(
+                f"""
+                <div style="
+                    background-color: #1e1e1e;
+                    color: white;
+                    padding: 1em;
+                    border-radius: 8px;
+                    border: 1px solid #444;
+                    font-size: 15px;
+                    font-family: 'Courier New', monospace;
+                    max-height: 300px;
+                    overflow-y: auto;
+                    white-space: pre-wrap;">
+                    {st.session_state.blog_output.strip()}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
     elif task == "Create Sections":
         st.info("Prompt example: Create blog sections for the topic: Future of Robotics")
         text = st.text_area("Enter your text:",
                             placeholder=placeholder_map[task], 
-                            height=100)        
+                            height=100,disabled=True)        
         if st.button("📝 Generate Content"):
             if text.strip() == "":
                 st.warning("Please enter a text before generating.")
             else:
                 result = Loding_process(text)
                 st.success("✅ Output Generated")
-                st.text_area("📄 Result", value=result.strip(), height=300)
+            st.markdown("📄 **Result**")
+
+            st.markdown(
+                f"""
+                <div style="
+                    background-color: #1e1e1e;
+                    color: white;
+                    padding: 1em;
+                    border-radius: 8px;
+                    border: 1px solid #444;
+                    font-size: 15px;
+                    font-family: 'Courier New', monospace;
+                    max-height: 300px;
+                    overflow-y: auto;
+                    white-space: pre-wrap;">
+                    {st.session_state.blog_output.strip()}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
     elif task == "Explain Content":
         st.info("Prompt example: Expand this blog section: Role of AI in transportation")
@@ -223,9 +296,29 @@ _“Technology rooted in culture is the future.”_''')
             else:
                 result = Loding_process(text)
                 st.success("✅ Output Generated")
-                st.text_area("📄 Result", value=result.strip(), height=300)
+            st.markdown("📄 **Result**")
+
+            st.markdown(
+                f"""
+                <div style="
+                    background-color: #1e1e1e;
+                    color: white;
+                    padding: 1em;
+                    border-radius: 8px;
+                    border: 1px solid #444;
+                    font-size: 15px;
+                    font-family: 'Courier New', monospace;
+                    max-height: 300px;
+                    overflow-y: auto;
+                    white-space: pre-wrap;">
+                    {st.session_state.blog_output.strip()}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+            
 def main():
-    st.set_page_config(page_title="GemBharatAI", layout="centered")
+    st.set_page_config(page_title="JaiBharatAI", layout="centered")
 
     if "continue_clicked" not in st.session_state:
         st.session_state.continue_clicked = False
@@ -265,19 +358,19 @@ def main():
         except:
             st.warning("⚠️ Logo not found.")
 
-        st.markdown("### 👋 Welcome to GemBharat AI")
-        st.markdown("""<div style="text-align: left; font-size: 17px; margin-top: 10px;">👇 <strong>Click “Continue” to Launch GemBharat AI</strong></div>""", unsafe_allow_html=True)
+        st.markdown("### 👋 Welcome to JaiBharat AI")
+        st.markdown("""<div style="text-align: center; font-size: 17px; margin-top: 10px;">👇 <strong>Click “Continue” to Launch JaiBharat AI</strong></div>""", unsafe_allow_html=True)
         st.markdown("<div style='margin-top: 25px;'></div>", unsafe_allow_html=True)  # Adds vertical space
-       
         if st.button("🚀 Continue", key="continue"):
             st.session_state.continue_clicked = True
             st.rerun()
 
 
     else:
-        blog_app()
+        working_apps()
 
 if __name__ == "__main__":
     main()
+                
                 
 
