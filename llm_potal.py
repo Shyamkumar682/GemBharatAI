@@ -264,33 +264,7 @@ def main():
         st.markdown("Your intelligent co-writer awaits below.")
         st.markdown("""<div style="text-align: center; font-size: 17px; margin-top: 10px;">👇 <strong>Click “Continue” to Launch GemBharat AI</strong></div>""", unsafe_allow_html=True)
         st.markdown("<div style='margin-top: 25px;'></div>", unsafe_allow_html=True)  # Adds vertical space
-        st.markdown("""
-    <div style="display: flex; justify-content: center; margin-top: 30px;">
-        <form action="" method="post">
-            <button type="submit" style="
-                background-color: #ff4b4b;
-                color: white;
-                font-weight: bold;
-                border-radius: 8px;
-                padding: 0.6em 1.5em;
-                font-size: 16px;
-                border: none;
-                cursor: pointer;
-                animation: pulse 1.5s infinite;
-            ">🚀 Continue</button>
-        </form>
-    </div>
-    <style>
-    @keyframes pulse {
-      0% {box-shadow: 0 0 0 0 rgba(255,75,75, 0.5);}
-      70% {box-shadow: 0 0 0 10px rgba(255,75,75, 0);}
-      100% {box-shadow: 0 0 0 0 rgba(255,75,75, 0);}
-    }
-    </style>
-    """, unsafe_allow_html=True)
-    
-    # Detect form submission manually
-        if st.session_state.get("continue_clicked") is not True:
+       
             if st.form_submit_button("🚀 Continue", key="continue_hidden"):
                 st.session_state.continue_clicked = True
                 st.rerun()
