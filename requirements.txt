@@ -1,5 +1,4 @@
 Pillow==11.3.0
-protobuf==6.31.1
 streamlit==1.46.1
 
 google-generativeai
