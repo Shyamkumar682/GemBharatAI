@@ -107,13 +107,17 @@ def blog_app():
         }
     
     def Loding_process(text):
-        with st.spinner("⏳ Generating content..."):
-            progressing = st.progress(0)
-            for i in range(100):
-                time.sleep(0.08)
-                progressing.progress(i + 1)
+        status = st.empty()
+        animation_frames = ["🤖", "🧠", "✨", "🔍", "📚", "💡", "📝"]
+        for i in range(14):
+            frame = animation_frames[i % len(animation_frames)]
+            status.markdown(f"<div style='font-size: 24px;'>{frame} Generating content... Please wait.</div>", unsafe_allow_html=True)
+            time.sleep(0.25)
+        with st.spinner("Finalizing..."):
             result = generate_blog_content(text)
+        status.markdown("✅ <b>Content generated successfully!</b>", unsafe_allow_html=True)
         return result
+
 
     if option == "PDF Reader":
         
@@ -131,32 +135,33 @@ def blog_app():
         st.header("Content Generator")
         st.info(f"Prompt example: {placeholder_map[task]}")
 
-        st.session_state.setdefault("blog_input", "")
         st.session_state.setdefault("blog_output", "")
 
+        # ✅ Correct: Inside form
         with st.form("blog_form", clear_on_submit=False):
             blog_input = st.text_area(
                 "Enter your text:",
-                value=st.session_state.blog_input,
                 placeholder=placeholder_map[task],
                 height=100,
-                key="blog_input_area"
+                key="blog_input"  # session_state key
             )
+            generate = st.form_submit_button("📝 Generate Content")
 
-            col1, col2 = st.columns([1, 1])
-            generate = col1.form_submit_button("📝 Generate Content")
-
+        # ✅ Submission handling
         if generate:
             if blog_input.strip() == "":
-                st.warning("🚨 Please enter a text before generating.")
+                st.warning("🚨 Please enter text before generating.")
             else:
-                st.session_state.blog_input = blog_input
                 result = Loding_process(blog_input)
                 st.session_state.blog_output = result
                 st.success("✅ Output Generated")
 
-        if st.session_state.blog_output:
-            st.text_area("📄 Result", value=st.session_state.blog_output.strip(), height=300)
+        # ✅ Output display
+        if "blog_output" in st.session_state and st.session_state.blog_output:
+            st.text_area("📄 Result",
+                        value=st.session_state.blog_output.strip(),
+                        height=300,
+                        key="blog_output_box")
 
     elif option == "About":
         st.write('''### 🤖 About GemBharat AI
