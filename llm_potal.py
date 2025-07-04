@@ -40,7 +40,7 @@ def blog_app():
     except:
         st.warning("⚠️ Logo file not found. Please check the path.")
         
-    st.title("GemBharatAI")
+    st.title("🧠 GemBharatAI")
     st.sidebar.title("Inspired by India and Gemini AI")
     
     with st.sidebar:
