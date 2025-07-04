@@ -262,7 +262,8 @@ def main():
 
         st.markdown("### 👋 Welcome to GemBharat AI")
         st.markdown("Your intelligent co-writer awaits below.")
-        st.markdown("👇 Click Here Continue to Launched")
+        st.markdown("""<div style="text-align: center; font-size: 18px; margin-top: 10px;">👇 <strong>Click “Continue” to Launch GemBharat AI</strong></div>""", unsafe_allow_html=True)
+
         if st.button("🚀 Continue", key="continue"):
             st.session_state.continue_clicked = True
             st.rerun()
