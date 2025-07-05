@@ -182,7 +182,7 @@ def working_apps():
                             """,
                             unsafe_allow_html=True
                         )
-            st.success("\n✔️ Answer generated successfully!")
+           
                                         
     elif option == "Chat":
         if "generated_once" not in st.session_state:
