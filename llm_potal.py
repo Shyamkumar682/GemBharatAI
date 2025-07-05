@@ -125,38 +125,74 @@ def working_apps():
             pdf_text = Pdf_Extraction(uploaded_file)
             question = st.text_input("Ask a question about the PDF:")
             if question:
+                tone = st.selectbox("Choose tone for enhanced answer:", ["Formal", "Simple Hindi", "Creative"])
                 with st.spinner("Thinking..."):
-                    answer = Pdf_Que(pdf_text[:100000], question)
-                    st.markdown("**Answer:**")
-                    
-                    # ✅ Custom styled, non-editable result box
-                    st.markdown("📄 **Result**")
-                    st.markdown(
-                        f"""
-                        <div style="
-                            background-color: #1e1e1e;
-                            color: white;
-                            padding: 1em;
-                            border-radius: 8px;
-                            border: 1px solid #444;
-                            font-size: 15px;
-                            font-family: 'Courier New', monospace;
-                            max-height: 300px;
-                            overflow-y: auto;
-                            white-space: pre-wrap;">
-                            {answer.strip()}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-                        
+                    # Step 1: Extract raw answer from PDF
+                    raw_answer = Pdf_Que(pdf_text[:100000], question)
+                    enhanced_prompt = f"""User asked: {question}PDF says: {raw_answer}Rewrite this answer in a {tone.lower()} tone, matching the user's intent."""
+            # Step 2: Enhance using Gemini API
+                    enhanced_prompt = f"""User asked: {question}
+                    PDF says: {raw_answer}
+
+                    Rewrite this answer in a clearer, more helpful way, matching the user's intent."""
+                    try:
+                        enhanced_answer = model.generate_content(enhanced_prompt).text
+                    except Exception as e:
+                        enhanced_answer = "❌ Gemini failed to enhance the answer."
+
+                    # Step 3: Display both answers in interactive tabs
+                    tab1, tab2 = st.tabs(["📄 Raw Answer", "✨ Enhanced Answer"])
+                    with tab1:
+                        st.markdown("**Extracted from PDF:**")
+                        st.markdown(
+                            f"""
+                            <div style="
+                                background-color: #1e1e1e;
+                                color: white;
+                                padding: 1em;
+                                border-radius: 8px;
+                                border: 1px solid #444;
+                                font-size: 15px;
+                                font-family: 'Courier New', monospace;
+                                max-height: 300px;
+                                overflow-y: auto;
+                                white-space: pre-wrap;">
+                                {raw_answer.strip()}
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
+                    with tab2:
+                        st.markdown("**Enhanced for clarity:**")
+                        st.markdown(
+                            f"""
+                            <div style="
+                                background-color: #202020;
+                                color: #e0e0e0;
+                                padding: 1em;
+                                border-radius: 8px;
+                                border: 1px solid #555;
+                                font-size: 15px;
+                                font-family: 'Courier New', monospace;
+                                max-height: 300px;
+                                overflow-y: auto;
+                                white-space: pre-wrap;">
+                                {enhanced_answer.strip()}
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
+            st.success("\n✔️ Answer generated successfully!")
+                                        
     elif option == "Chat":
+        if "generated_once" not in st.session_state:
+            st.session_state.generated_once = False
         st.header("Content Generator")
         st.info(f"Prompt example: {placeholder_map[task]}")
 
         st.session_state.setdefault("blog_output", "")
 
-        # ✅ Correct: Inside form
+        # Correct: Inside form
         with st.form("blog_form", clear_on_submit=False):
             input = st.text_area(
                 "Enter your text:",
@@ -169,11 +205,11 @@ def working_apps():
         # ✅ Submission handling
         if generate:
             if input.strip() == "":
-                st.warning("🚨 Please enter text before generating.")
+                st.warning("🔴 Please enter text before generating.")
             else:
                 result = Loding_process(input)
                 st.session_state.blog_output = result
-                st.success("✅ Output Generated")
+                st.success("✔️ Output Generated")
 
         # ✅ Output display
         if "blog_output" in st.session_state and st.session_state.blog_output:
@@ -197,6 +233,8 @@ def working_apps():
                 """,
                 unsafe_allow_html=True
             )
+            
+            
 
     elif option == "About":
         st.write('''### 🤖 About JaiBharat AI
@@ -231,20 +269,21 @@ _“Technology rooted in culture is the future.”_''')
                 st.warning("🚨 Please enter a text before generating.")
             else:
                 result = Loding_process(text)
-                st.success("✅ Output Generated")
+                st.success("✔️ Output Generated")
             st.markdown("📄 **Result**")
 
             st.markdown(
                 f"""
                 <div style="
-                    background-color: #1e1e1e;
-                    color: white;
-                    padding: 1em;
+                <div style="
+                    background-color: linear-gradient(135deg, #1e1e1e, #2c2c2c);
+                    color: #fff;
+                    padding: 1.3em;
                     border-radius: 8px;
-                    border: 1px solid #444;
-                    font-size: 15px;
+                    border: 5px solid #ff9933;
+                    font-size: 15.3px;
                     font-family: 'Courier New', monospace;
-                    max-height: 300px;
+                    max-height: 340px;
                     overflow-y: auto;
                     white-space: pre-wrap;">
                     {st.session_state.blog_output.strip()}
@@ -263,20 +302,20 @@ _“Technology rooted in culture is the future.”_''')
                 st.warning("Please enter a text before generating.")
             else:
                 result = Loding_process(text)
-                st.success("✅ Output Generated")
-            st.markdown("📄 **Result**")
+                st.success("✔️ Output Generated")
+            st.markdown("📄 ***Result***")
 
             st.markdown(
                 f"""
                 <div style="
-                    background-color: #1e1e1e;
-                    color: white;
-                    padding: 1em;
+                    background-color: linear-gradient(135deg, #1e1e1e, #2c2c2c);
+                    color: #fff;
+                    padding: 1.3em;
                     border-radius: 8px;
-                    border: 1px solid #444;
-                    font-size: 15px;
+                    border: 5px solid #ff9933;
+                    font-size: 15.3px;
                     font-family: 'Courier New', monospace;
-                    max-height: 300px;
+                    max-height: 340px;
                     overflow-y: auto;
                     white-space: pre-wrap;">
                     {st.session_state.blog_output.strip()}
@@ -295,20 +334,20 @@ _“Technology rooted in culture is the future.”_''')
                 st.warning("Please enter a text before generating.")
             else:
                 result = Loding_process(text)
-                st.success("✅ Output Generated")
+                st.success("✔️ Output Generated")
             st.markdown("📄 **Result**")
 
             st.markdown(
                 f"""
                 <div style="
-                    background-color: #1e1e1e;
-                    color: white;
-                    padding: 1em;
+                    background-color: linear-gradient(135deg, #1e1e1e, #2c2c2c);
+                    color: #fff;
+                    padding: 1.3em;
                     border-radius: 8px;
-                    border: 1px solid #444;
-                    font-size: 15px;
+                    border: 5px solid #ff9933;
+                    font-size: 15.3px;
                     font-family: 'Courier New', monospace;
-                    max-height: 300px;
+                    max-height: 340px;
                     overflow-y: auto;
                     white-space: pre-wrap;">
                     {st.session_state.blog_output.strip()}
@@ -372,5 +411,3 @@ def main():
 if __name__ == "__main__":
     main()
                 
-                
-
